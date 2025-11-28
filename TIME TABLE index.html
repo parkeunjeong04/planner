@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>스터디 플래너</title>
+<style>
+  table { border-collapse: collapse; }
+  td, th { border: 1px solid #ccc; width: 80px; height: 30px; text-align: center; cursor: pointer; }
+  .filled { background-color: lightblue; }
+</style>
+</head>
+<body>
+
+<h2>스터디 플래너</h2>
+<table id="planner">
+  <tr>
+    <th>시간</th>
+    <th>10분1</th>
+    <th>10분2</th>
+    <th>10분3</th>
+    <th>10분4</th>
+    <th>10분5</th>
+    <th>10분6</th>
+  </tr>
+</table>
+
+<script>
+const table = document.getElementById('planner');
+const startHour = 8; // 시작 시간 예시
+
+// 25행 생성
+for(let i=0; i<25; i++){
+  const tr = document.createElement('tr');
+  const th = document.createElement('td');
+  th.innerText = (startHour+i)%24 + ':00';
+  tr.appendChild(th);
+  
+  // 2~7열 클릭 가능한 칸
+  for(let j=0; j<6; j++){
+    const td = document.createElement('td');
+    td.addEventListener('click', () => {
+      td.classList.toggle('filled');
+      saveData(i, j, td.classList.contains('filled'));
+    });
+    tr.appendChild(td);
+  }
+  
+  table.appendChild(tr);
+}
+
+// 데이터 저장 예시 (로컬스토리지)
+function saveData(row, col, filled){
+  let data = JSON.parse(localStorage.getItem('plannerData') || '{}');
+  if(!data[row]) data[row] = {};
+  data[row][col] = filled;
+  localStorage.setItem('plannerData', JSON.stringify(data));
+}
+
+// 불러오기
+function loadData(){
+  let data = JSON.parse(localStorage.getItem('plannerData') || '{}');
+  for(let row in data){
+    for(let col in data[row]){
+      if(data[row][col]){
+        table.rows[parseInt(row)+1].cells[parseInt(col)+1].classList.add('filled');
+      }
+    }
+  }
+}
+loadData();
+</script>
+
+</body>
+</html>
